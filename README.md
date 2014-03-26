@@ -1,11 +1,17 @@
-Calvin Belden
-U. of Notre Dame
-Senior Design Project
+Calvin Belden<br>
+U. of Notre Dame<br>
+Senior Design Project<br>
 
-pybeacon
+<br>
 
-A Python module that essentially turns a Raspberry Pi into a Bluetooth LE beacon logger.
+<h3>pybeacon</h3>
 
-What you need besides this module:
--bluez (linux bluetooth module)
--bluetooth dongle
+<p>
+pybeacon is a Python module that is designed to log Bluetooth Le beacons. All testing and development has been implemented using a Raspberry Pi.
+</p>
+
+<p>
+What you need besides this module:<br>
+-bluez (linux bluetooth module)<br>
+-bluetooth dongle<br>
+<p>
