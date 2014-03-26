@@ -1,8 +1,7 @@
 Calvin Belden<br>
-U. of Notre Dame<br>
-Senior Design Project<br>
-
-<br>
+University of Notre Dame<br>
+Senior Design<br>
+Team GreenSpace<br>
 
 <h3>pybeacon</h3>
 
