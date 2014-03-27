@@ -5,10 +5,7 @@ import os
 
 class BeaconLogger():
     def __init__(self, name=__name__):
-        """
-        Overview:
-            Instantiates a logging session.
-        """
+        """Instantiates a logging session."""
         # Initialize logging
         self._logpath = 'logs'
         self._log_date = datetime.min
@@ -20,10 +17,7 @@ class BeaconLogger():
             self._makedir(self._logpath)
     
     def _makedir(self, path):
-        """
-        Overview:
-            Makes a new directory in the current directory of execution.
-        """
+        """Makes a new directory in the current directory of execution."""
         try:
             os.makedirs(path)
         except OSError:
@@ -32,17 +26,12 @@ class BeaconLogger():
         return True
 
     def _get_new_log_file(self):
-        """
-        Overview:
-            Creates new log directory if needed
-        Output:
-            -Path to new log file
-        """
+        """Creates new log directory if needed and return path to new log file."""
         now = datetime.now()
         delta = now - self._log_date
         log_dir = self._logpath + '/' + str(now.date())
 
-        # generate new log file if expired and directory doesnt already exist
+        # Generate new log file if expired and directory doesnt already exist
         if delta.days > 0 and not os.path.exists(log_dir):
             self._makedir(log_dir)
 
@@ -51,12 +40,7 @@ class BeaconLogger():
         return log_dir + '/' + logfile
 
     def _log_expired(self):
-        """
-        Overview:
-            Checks if the date associated with the current log file has expired.
-        Output:
-            True if expired; False if not.
-        """
+        """Checks if the date associated with the current log file has expired."""
         now = datetime.now()
         delta = now - self._log_date
 
@@ -66,26 +50,16 @@ class BeaconLogger():
         return False
 
     def _assign_handler(self):
-        """
-        Overview:
-            Creates a new log dir/file as needed and assigns to log handler.
-        Description:
-            Checks if the current handler is current; if not, a new log dir/file
-            is created and a new handler is assigned to it.
-        """
-        # check if date associated w/ current log file has expired
-        if not self._log_expired():
-            return
-
-        # get current handler
+        """Assigns a new log handler to the logger."""
+        # Get current handler
         handlers = self._log.handlers
 
         if len(handlers) > 0:
-            # remove current file handler
+            # Remove current file handler
             cur_fh = self._log.handlers[0]
             self._log.removeHandler(cur_fh)
 
-        # need to make a new log output dir/file
+        # Need to make a new log output dir/file
         new_path = self._get_new_log_file()
         new_fh = logging.FileHandler(new_path)
 
@@ -94,14 +68,12 @@ class BeaconLogger():
         self._log_date = datetime.now()
 
     def logBeacon(self, beaconID, rssi):
-        """
-        Overview:
-            Logs the beaconID and rssi value.
-        """
-        # assign correct handler
-        self._assign_handler()
+        """Logs the beaconID and rssi value."""
+        # Assign new handler if date associated w/ current log file has expired
+        if self._log_expired():
+            self._assign_handler()
         
-        # log message
+        # Log message
         msg = str(datetime.now()) + '\t' + beaconID + '\t' + rssi
         self._log.info(msg)
         
