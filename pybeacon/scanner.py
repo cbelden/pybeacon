@@ -5,10 +5,11 @@ from logger import BeaconLogger
 
 
 class Scanner():
-    def __init__(self, debug=False, loghandler=logging.StreamHandler()):
+    def __init__(self, debug=False, loghandler=logging.StreamHandler(), devname='hci0'):
         """Creates a new Scanner object."""
         # Set up beacon logging
         self._beaconlog = BeaconLogger('beacon-logger')
+        self._devname = devname
 
         # Set up debug logging
         self._log = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ class Scanner():
         """Toggles the Bluetooth dongle: off/on."""
         # Turn Bluetooth dongle off
         self._log.info('Turning off bt dongle')
-        command = ['sudo', 'hciconfig', 'hci0', 'down']
+        command = ['sudo', 'hciconfig', self._devname, 'down']
         p = subprocess.Popen(command, stdout=subprocess.PIPE)
         p.wait()
 
