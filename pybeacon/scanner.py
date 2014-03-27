@@ -1,10 +1,11 @@
 import subprocess
 import os
 import logging
+from logger import BeaconLogger
 
 
 class Scanner():
-    def __init__(self, logging=False, loghandler=logging.StreamHandler()):
+    def __init__(self, debug=False, loghandler=logging.StreamHandler()):
         """
         Overview:
             Initializes the Scanner object. If logging is true, a logger is created that writes to
@@ -13,12 +14,15 @@ class Scanner():
             -logging: specifies whether or not logging is turned on
             -loghandler: particular log handler (specifies output destination)
         """
-        # Set up logging
+        # Set up beacon logging
+        self._beaconlog = BeaconLogger('beacon-logger')
+
+        # Set up debug logging
         self._log = logging.getLogger(__name__)
         self._log.addHandler(loghandler)
         
         # Info logging will be suppressed if logging is not specified
-        if logging:
+        if debug:
             self._log.setLevel(logging.INFO)
 
     def _lescan(self):
@@ -29,6 +33,7 @@ class Scanner():
         Returns:
             True if output is standard upon successful execution; returns false if the command fails.
         """
+        self._log.info('Starting LEscan...')
         command = ['sudo', 'stdbuf', '-oL', 'hcitool', 'lescan']
         lescan = subprocess.Popen(command, stdout=subprocess.PIPE)
         r = lescan.stdout.readline()
@@ -80,6 +85,7 @@ class Scanner():
         Returns:
             -hcidump process handle
         """
+        self._log.info('Starting hcidump..')
         command = ['sudo', 'stdbuf', '-oL', 'hcidump']
         return subprocess.Popen(command, stdout=subprocess.PIPE)
 
@@ -101,8 +107,12 @@ class Scanner():
             info = r.strip().split()
 
             if info[0] == 'bdaddr':
-                print 'Device ID:\t', info[1]
+                beaconID =  info[1]
 
             elif info[0] == 'RSSI:':
-                print 'RSSI:     \t', info[1]
+                rssi = info[1]
+
+                # log beacon
+                self._beaconlog.logBeacon(beaconID, rssi)
+                self._log.info('Beacon: %s\tRSSI: %s' % (beaconID, rssi))
 

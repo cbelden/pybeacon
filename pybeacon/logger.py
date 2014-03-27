@@ -4,19 +4,20 @@ import os
 
 
 class BeaconLogger():
-    def __init__(self, name='beacon-logger'):
+    def __init__(self, name=__name__):
         """
         Overview:
             Instantiates a logging session.
         """
-        # Initialize logger
+        # Initialize logging
+        self._logpath = 'logs'
+        self._log_date = datetime.min
         self._log = logging.getLogger(name)
         self._log.setLevel(logging.INFO)
-        self._log_date = datetime.min
 
         # Create logs dir if necessary
-        if not os.path.exists('logs'):
-            self._makedir('logs')
+        if not os.path.exists(self._logpath):
+            self._makedir(self._logpath)
     
     def _makedir(self, path):
         """
@@ -39,7 +40,7 @@ class BeaconLogger():
         """
         now = datetime.now()
         delta = now - self._log_date
-        log_dir = 'logs/' + str(now.date())
+        log_dir = self._logpath + '/' + str(now.date())
 
         # generate new log file if expired and directory doesnt already exist
         if delta.days > 0 and not os.path.exists(log_dir):
@@ -74,7 +75,6 @@ class BeaconLogger():
         """
         # check if date associated w/ current log file has expired
         if not self._log_expired():
-            print 'log not expired'
             return
 
         # get current handler
