@@ -4,7 +4,7 @@ import logging
 from logger import BeaconLogger
 
 
-class Scanner():
+class BeaconScanner():
     def __init__(self, debug=False, loghandler=logging.StreamHandler(), devname='hci0'):
         """Creates a new Scanner object."""
         # Set up beacon logging
@@ -62,21 +62,21 @@ class Scanner():
 
     def _hcidump(self):
         """Executes the hcitools hcidump command which outputs all bluetooth activity."""
-        self._log.info('Starting hcidump..')
+        self._log.info('Starting hcidump...')
         command = ['sudo', 'stdbuf', '-oL', 'hcidump']
         return subprocess.Popen(command, stdout=subprocess.PIPE)
 
     def log_beacons(self):
         """Indefinitely logs the ID and RSSI of advertising Bluetooth LE devices."""
-        # Execute lescan command: listens for btle devices
+        # Execute lescan command: listens for asdvertising btle devices
         if not self._lescan():
             self._recover_lescan()
 
         # Execute hcidump command: outputs all 
         hcidump = self._hcidump()
 
-        # read device information
         while 1:
+            # read device information
             r = hcidump.stdout.readline()
             info = r.strip().split()
 
@@ -89,4 +89,3 @@ class Scanner():
                 # log beacon
                 self._beaconlog.logBeacon(beaconID, rssi)
                 self._log.info('Beacon: %s\tRSSI: %s' % (beaconID, rssi))
-
