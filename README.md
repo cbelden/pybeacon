@@ -1,14 +1,15 @@
 <h2>pybeacon</h2>
 <h4>Overview</h4>
 <p>
-pybeacon is a Python module that is designed to log Bluetooth LE beacons. All testing and development has been implemented using a Raspberry Pi running Raspbian.<br>
-The intended way to use this package is illustrated in pybeacon_test.py: simply create a new BeaconScanner object and call its log_beacons() method. The BeaconScanner will continuously log beacons until you ctl+c.
+The pybeacon tool is a Python package that is designed to log Bluetooth LE beacons. The package leverages the commands in the Linux bluez Bluetooth module and tracks the device ID, rssi value, and timestamp of all advertising Bluetooth LE devices.<br>
+The intended way to use this package is illustrated in pybeacon_test.py: simply create a new BeaconScanner object and call its log_beacons() method. The BeaconScanner will continuously log beacons until you kill the process.
 </p>
-<h4>What you need besides this module</h4>
-<p>
--bluez (linux bluetooth module)<br>
--bluetooth dongle<br>
-</p>
+<h4>What you need</h4>
+<ul>
+<li>Rasbperry Pi (all testing/development implemented using Pi Model B running Raspbian)</li>
+<li>bluetooth dongle</li>
+<li>bluez (linux bluetooth library) - http://www.bluez.org/</li>
+</ul>
 <h4>Author Info</h4>
 <p>
 Calvin Belden<br>
