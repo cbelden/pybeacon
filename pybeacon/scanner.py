@@ -68,7 +68,7 @@ class BeaconScanner():
 
     def log_beacons(self):
         """Indefinitely logs the ID and RSSI of advertising Bluetooth LE devices."""
-        # Execute lescan command: listens for asdvertising btle devices
+        # Execute lescan command: listens for advertising btle devices
         if not self._lescan():
             self._recover_lescan()
 
@@ -76,7 +76,7 @@ class BeaconScanner():
         hcidump = self._hcidump()
 
         while 1:
-            # read device information
+            # Read device information
             r = hcidump.stdout.readline()
             info = r.strip().split()
 
@@ -86,6 +86,6 @@ class BeaconScanner():
             elif info[0] == 'RSSI:':
                 rssi = info[1]
 
-                # log beacon
+                # Log beacon data
                 self._beaconlog.logBeacon(beaconID, rssi)
                 self._log.info('Beacon: %s\tRSSI: %s' % (beaconID, rssi))
