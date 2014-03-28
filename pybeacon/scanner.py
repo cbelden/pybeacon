@@ -29,6 +29,7 @@ class BeaconScanner():
         # Check if output is indicative of a successful lescan
         if r != 'LE Scan ...\n':
             # Kill process and return False
+            self._log.warn('LEscan command failed.')
             os.system('sudo kill %s' % lescan.pid)
             return False
 
@@ -43,7 +44,7 @@ class BeaconScanner():
         p.wait()
 
         # Turn Bluetooth dongle on
-        self._log.info('turning on bt dongle')
+        self._log.info('Turning on bt dongle')
         command[3] = 'up'
         p = subprocess.Popen(command, stdout=subprocess.PIPE)
         p.wait()
