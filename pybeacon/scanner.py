@@ -89,4 +89,4 @@ class BeaconScanner():
 
                 # Log beacon data
                 self._beaconlog.logBeacon(beaconID, rssi)
-                self._log.info('Beacon: %s\tRSSI: %s' % (beaconID, rssi))
+                self._log.info('Logging beacon.. ID: %s\tRSSI: %s' % (beaconID, rssi))
