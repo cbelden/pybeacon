@@ -4,10 +4,10 @@ import os
 
 
 class BeaconLogger():
-    def __init__(self, name=__name__):
+    def __init__(self, logpath, name=__name__):
         """Instantiates a logging session."""
         # Initialize logging
-        self._logpath = 'logs'
+        self._logpath = logpath
         self._log_date = datetime.min
         self._log = logging.getLogger(name)
         self._log.setLevel(logging.INFO)

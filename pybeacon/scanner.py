@@ -5,15 +5,17 @@ from logger import BeaconLogger
 
 
 class BeaconScanner():
-    def __init__(self, debug=False, loghandler=logging.StreamHandler(), devname='hci0'):
+    def __init__(self, debug=False, logpath='/home/pi/gspace/logs', loghandler=None, devname='hci0'):
         """Creates a new Scanner object."""
         # Set up beacon logging
-        self._beaconlog = BeaconLogger('beacon-logger')
+        self._beaconlog = BeaconLogger(logpath, 'beacon_logger')
         self._devname = devname
 
         # Set up debug logging
         self._log = logging.getLogger(__name__)
-        self._log.addHandler(loghandler)
+
+        if loghandler: self._log.addHandler(loghandler)
+        else: self._log.addHandler(logging.StreamHandler())
         
         # Info logging will be suppressed if logging is not specified
         if debug:
