@@ -1,8 +1,13 @@
 from pybeacon.scanner import BeaconScanner
 from logging import FileHandler
 
+# Set up debugging file handler (gets verbose output from the BeaconScanner)
+dh = FileHandler('/home/pi/pybeacon/debug/output.log')
 
-fh = FileHandler('/home/pi/gspace/daemon.log')
-b_scanner = BeaconScanner(debug=True, loghandler=fh)
+# Set beacon log path
+beaconpath = '/home/pi/pybeacon/beacon_records'
+
+# Get BeaconScanner instance
+b_scanner = BeaconScanner(beaconpath, debug=True, debug_handler=dh)
 b_scanner.log_beacons()
 
