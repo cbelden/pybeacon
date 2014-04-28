@@ -19,7 +19,6 @@ class BeaconLogger():
         self._log.setLevel(logging.INFO)
 
 
-
     def _makedir(self, path):
         """Makes a new directory; returns True on success False otherwise."""
 
