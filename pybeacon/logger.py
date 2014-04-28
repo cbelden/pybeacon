@@ -7,7 +7,6 @@ class BeaconLogger():
     def __init__(self, logpath, name=__name__):
         """Instantiates the BeaconLogger."""
 
-
         # Check that the directory specified by logpath exists
         if os.path.exists(self._logpath):
             self._logpath = logpath.rstrip('/')
