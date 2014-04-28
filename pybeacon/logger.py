@@ -5,19 +5,24 @@ import os
 
 class BeaconLogger():
     def __init__(self, logpath, name=__name__):
-        """Instantiates a logging session."""
-        # Initialize logging
-        self._logpath = logpath
+        """Instantiates the BeaconLogger."""
+
+
+        # Check that the directory specified by logpath exists
+        if os.path.exists(self._logpath):
+            self._logpath = logpath
+        else:
+            print "Warning: specified log directory '" + logpath + "' does not exist."
+
         self._log_date = datetime.min
         self._log = logging.getLogger(name)
         self._log.setLevel(logging.INFO)
 
-        # Create logs dir if necessary
-        if not os.path.exists(self._logpath):
-            self._makedir(self._logpath)
-    
+
+
     def _makedir(self, path):
-        """Makes a new directory in the current directory of execution."""
+        """Makes a new directory; returns True on sucess False otherwise."""
+
         try:
             os.makedirs(path)
         except OSError:
@@ -25,32 +30,36 @@ class BeaconLogger():
 
         return True
 
+
     def _get_new_log_file(self):
-        """Creates new log directory if needed and return path to new log file."""
-        now = datetime.now()
-        delta = now - self._log_date
+        """Creates new log directory if needed and returns path to new log file."""
+
         log_dir = self._logpath + '/' + str(now.date())
 
-        # Generate new log file if expired and directory doesnt already exist
-        if delta.days > 0 and not os.path.exists(log_dir):
+        # Generate new log directory if necessary
+        if not os.path.exists(log_dir):
             self._makedir(log_dir)
 
         logfile = str(now.hour) + '.txt'
 
         return log_dir + '/' + logfile
 
+
     def _log_expired(self):
+
         """Checks if the date associated with the current log file has expired."""
         now = datetime.now()
         delta = now - self._log_date
 
-        if delta.days > 0 or delta.seconds >= 3600:
+        if delta.total_seconds() >= 3600:
             return True
 
         return False
 
+
     def _assign_handler(self):
         """Assigns a new log handler to the logger."""
+
         # Get current handler
         handlers = self._log.handlers
 
@@ -67,8 +76,10 @@ class BeaconLogger():
         self._log.addHandler(new_fh)
         self._log_date = datetime.now()
 
+
     def logBeacon(self, beaconID, rssi):
         """Logs the beaconID and rssi value."""
+
         # Assign new handler if date associated w/ current log file has expired
         if self._log_expired():
             self._assign_handler()
