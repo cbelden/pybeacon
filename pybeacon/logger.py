@@ -19,7 +19,7 @@ class BeaconLogger():
         self._log.setLevel(logging.INFO)
 
 
-    def _makedir(self, path):
+    def _make_log_dir(self, path):
         """Makes a new directory if it does not already exist. Returns true on success, false otherwise."""
 
         try:
@@ -39,19 +39,18 @@ class BeaconLogger():
     def _get_new_log_file(self, date, hour):
         """Creates new log directory if needed and returns path to new log file."""
 
-        log_dir = '/'.join([self._logpath, str(date)])
+        log_path = '/'.join([self._logpath, str(date)])
 
         # Generate new log directory if necessary
-        if not os.path.exists(log_dir):
-            self._makedir(log_dir)
+        if not os.path.exists(log_path):
+            self._make_log_dir(log_path)
 
-        logfile = str(hour) + '.txt'
+        lfilename = str(hour) + '.txt'
 
-        return '/'.join([log_dir, logfile])
+        return '/'.join([log_path, lfilename])
 
 
     def _log_expired(self):
-
         """Checks if the date associated with the current log file has expired."""
 
         now = datetime.now()
