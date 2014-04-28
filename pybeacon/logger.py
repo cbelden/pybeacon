@@ -20,12 +20,18 @@ class BeaconLogger():
 
 
     def _makedir(self, path):
-        """Makes a new directory; returns True on success False otherwise."""
+        """Makes a new directory if it does not already exist. Returns true on success, false otherwise."""
 
         try:
             os.makedirs(path)
-        except OSError:
-            return False
+        except OSError, e:
+            # Return True if dir already exists
+            if e.args[0] is 17:
+                return True
+            
+            # Return False; some other error
+            else:
+                return False
 
         return True
 
