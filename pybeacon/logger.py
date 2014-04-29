@@ -23,7 +23,7 @@ class BeaconLogger():
 
 
     def _make_log_dir(self, path):
-        """Makes a new directory in the main log folder. Returns true on success, false otherwise."""
+        """Makes a new directory in the main log folder."""
 
         try:
             os.makedirs('/'.join([self._logpath, path]))
@@ -39,7 +39,7 @@ class BeaconLogger():
 
 
     def _get_new_log_file(self, date, hour):
-        """Creates new log directory if needed and returns path to new log file."""
+        """Creates new log directories as needed and returns the path to the current log file."""
 
         # Get folder name for this particular date
         dayfolder = str(date)
@@ -54,7 +54,7 @@ class BeaconLogger():
 
 
     def _log_expired(self, date, hour):
-        """Returns true if the current log is expired; false otherwise."""
+        """Returns true if the current log handler does not coincide with the current time/date."""
 
         if date != self._log_datetime.date() or hour != self._log_datetime.hour:
             return True
@@ -69,8 +69,8 @@ class BeaconLogger():
         handlers = self._log.handlers
 
         # Remove current file handler
-        if len(handlers) > 0:
-            cur_fh = self._log.handlers[0]
+        if len(handler) > 0:
+            cur_fh = handlers[0]
             self._log.removeHandler(cur_fh)
 
         # Assign a new handler for the new log file
