@@ -7,65 +7,62 @@ class BeaconLogger():
     def __init__(self, logpath, name=__name__):
         """Instantiates the BeaconLogger."""
 
-        # Check that the directory specified by logpath exists
-        if os.path.exists(self._logpath):
-            self._logpath = logpath.rstrip('/')
-        else:
-            print "Warning: specified log directory '" + logpath + "' does not exist."
-
-        mindate = datetime.min
-        self._log_date = {'date': mindate.date(), 'hour': mindate.hour}
+        # Create the logpath if it does not exist.
+        if not os.path.exists(logpath):
+            try:
+                os.makedirs(logpath)
+            except OSError, e:
+                print "Error creating the specified logpath."
+                raise e
+    
+        # Instantiate logging information
+        self._logpath = logpath
+        self._log_datetime = datetime.min
         self._log = logging.getLogger(name)
         self._log.setLevel(logging.INFO)
 
 
     def _make_log_dir(self, path):
-        """Makes a new directory if it does not already exist. Returns true on success, false otherwise."""
+        """Makes a new directory in the main log folder. Returns true on success, false otherwise."""
 
         try:
-            os.makedirs(path)
+            os.makedirs('/'.join([self._logpath, path]))
         except OSError, e:
             # Return True if dir already exists
             if e.args[0] is 17:
-                return True
-            
-            # Return False; some other error
-            else:
-                return False
+                return
 
-        return True
+            # Some other error; raise exception
+            raise e
+
+        return
 
 
     def _get_new_log_file(self, date, hour):
         """Creates new log directory if needed and returns path to new log file."""
 
-        log_path = '/'.join([self._logpath, str(date)])
+        # Get folder name for this particular date
+        dayfolder = str(date)
 
         # Generate new log directory if necessary
-        if not os.path.exists(log_path):
-            self._make_log_dir(log_path)
+        if not os.path.exists('/'.join([self._logpath, dayfolder])):
+            self._make_log_dir(dayfolder)
 
-        lfilename = str(hour) + '.txt'
+        # Return the path to the current log file
+        filename = str(hour) + '.txt'
+        return '/'.join([self._logpath, dayfolder, filename])
 
-        return '/'.join([log_path, lfilename])
 
+    def _log_expired(self, date, hour):
+        """Returns true if the current log is expired; false otherwise."""
 
-    def _log_expired(self):
-        """Checks if the date associated with the current log file has expired."""
-
-        now = datetime.now()
-        current_date = now.date()
-        current_hour = now.hour
-        prev_date =  self._log_date['date']
-        prev_hour = self._log_date['hour']
-
-        if current_date is not prev_date or current_hour is not prev_hour:
+        if date != self._log_datetime.date() or hour != self._log_datetime.hour:
             return True
 
         return False
 
 
-    def _assign_handler(self):
+    def _assign_handler(self, date, hour):
         """Assigns a new log handler to the logger."""
 
         # Get current handler
@@ -76,25 +73,28 @@ class BeaconLogger():
             cur_fh = self._log.handlers[0]
             self._log.removeHandler(cur_fh)
 
-        # Create the new log output dir/file
-        now = datetime.now()
-        new_path = self._get_new_log_file(now.date(), now.hour)
+        # Assign a new handler for the new log file
+        new_path = self._get_new_log_file(date, hour)
         new_fh = logging.FileHandler(new_path)
 
-        # Add new handler and update the associated log date
+        # Add new log handler and update the associated datetime
         self._log.addHandler(new_fh)
-        self._log_date['date'] = now.date()
-        self._log_date['hour'] = now.hour
+        self._log_datetime = datetime.now()
 
 
-    def logBeacon(self, beaconID, rssi):
+    def log_beacon(self, beaconID, rssi):
         """Logs the beaconID and rssi value."""
 
-        # Assign new handler if date associated w/ current log file has expired
-        if self._log_expired():
-            self._assign_handler()
+        # Get timestamp data
+        now = datetime.now()
+        today = now.date()
+        hr = now.hour
+
+        # Assigns appropriate file handler for current datetime
+        if self._log_expired(today, hr):
+            self._assign_handler(today, hr)
         
         # Log message
-        msg = str(datetime.now()) + '\t' + beaconID + '\t' + rssi
+        msg = str(now) + '\t' + beaconID + '\t' + rssi
         self._log.info(msg)
         
