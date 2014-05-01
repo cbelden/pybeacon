@@ -5,7 +5,7 @@ from logger import BeaconLogger
 
 
 class BeaconScanner():
-    def __init__(self, logpath, debug=False, debug_handler=None, devname='hci0'):
+    def __init__(self, logpath, debug=False, debug_handler=None, devname='hci0', rssi_threshold=-100):
         """Creates a new Scanner object."""
         # Set up beacon logging
         self._beaconlog = BeaconLogger(logpath, 'beacon_logger')
@@ -19,6 +19,9 @@ class BeaconScanner():
         # Info logging will be suppressed if not debugging
         if debug:
             self._log.setLevel(logging.INFO)
+
+        # Set rssi threshold
+        self._rssi_threshold = rssi_threshold
 
     def _lescan(self):
         """Executes the hcitool lescan command and checks for expected output."""
@@ -88,7 +91,9 @@ class BeaconScanner():
             elif info[0] == 'RSSI:':
                 rssi = info[1]
 
-                # Log beacon data
-                self._beaconlog.log_beacon(beaconID, rssi)
-                self._log.info('Logging beacon.. ID: %s\tRSSI: %s' % (beaconID, rssi))
+		# Log beacon data if RSSI is above the threshold
+	        if int(rssi) > self._rssi_threshold:
+                    # Log beacon data
+                    self._beaconlog.log_beacon(beaconID, rssi)
+                    self._log.info('Logging beacon.. ID: %s\tRSSI: %s' % (beaconID, rssi))
 
